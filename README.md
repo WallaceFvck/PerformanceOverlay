@@ -60,14 +60,14 @@ A maioria dos overlays de FPS usa **hooks DirectX** (interceptação de chamadas
 O PerformanceOverlay usa uma abordagem fundamentalmente diferente: **Event Tracing for Windows (ETW)**   o mesmo sistema de instrumentação que o Windows usa internamente para o Task Manager, o PresentMon da Intel e o CapFrameX.
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
-│   Jogo      │────▶│  DXGI/D3D9   │────▶│  Windows Kernel  │
-│ (DX12/VK/GL)│     │  Runtime     │     │  ETW Provider    │
-└─────────────┘     └──────────────┘     └────────┬────────┘
-                                                   │
-                                          Event ID 42 (Present)
-                                                   │
-                                         ┌─────────▼─────────┐
+┌─────────────┐      ┌──────────────┐      ┌─────────────────┐
+│   Jogo      │───>> │  DXGI/D3D9   │───>> │  Windows Kernel │
+│ (DX12/VK/GL)│      │  Runtime     │      │  ETW Provider   │
+└─────────────┘      └──────────────┘      └────────┬────────┘
+                                                    │
+                                        Event ID 42 (Present)
+                                                    │
+                                         ┌──────────▼──────────┐
                                          │  PerformanceOverlay │
                                          │  (consumidor ETW)   │
                                          │  Leitura passiva    │
