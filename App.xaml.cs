@@ -140,7 +140,7 @@ public partial class App : Application
         };
 
         var header = BuildMenuItem("🎮  PerformanceOverlay", textBrush, bgBrush, bgHoverBrush, accentBrush);
-        header.Click += (_, _) => { try { Process.Start(new ProcessStartInfo { FileName = "https://github.com/", UseShellExecute = true }); } catch { } };
+        header.Click += (_, _) => { try { Process.Start(new ProcessStartInfo { FileName = "https://github.com/WallaceFvck/PerformanceOverlay", UseShellExecute = true }); } catch { } };
         menu.Items.Add(header);
         menu.Items.Add(new Separator { Background = borderBrush, Height = 1, Margin = new Thickness(8, 4, 8, 4), Opacity = 0.6 });
 
