@@ -104,26 +104,32 @@ A janela do overlay usa `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE
 
 ### Requisitos
 
-- Windows 10/11 (x64)
-- [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0)
-- Execução como **Administrador** (necessário para ETW e sensores de hardware)
+* **Sistema Operacional**: Windows 10 ou 11 (x64).
+* **Privilégios**: Execução como **Administrador** (obrigatório para acessar o Kernel ETW e sensores de hardware).
+* **Runtime**: [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) (o instalador tentará detectar, mas recomendamos ter instalado).
 
-### Passos
+### Passos para Usuários (Recomendado)
 
-1. Baixe o [último release](https://github.com/WallaceFvck/PerformanceOverlay/releases/latest)
-2. Extraia o ZIP para qualquer pasta
-3. Execute `PerformanceOverlay.exe` **como Administrador**
-4. O overlay aparece no canto superior esquerdo   use **F8** para toggle
+1.  Acesse a página de [Últimos Releases](https://github.com/WallaceFvck/PerformanceOverlay/releases/latest).
+2.  Baixe o arquivo **`PerformanceOverlay_Setup.exe`**.
+3.  Execute o instalador e siga as instruções na tela.
+4.  Ao finalizar, o ícone aparecerá na sua Área de Trabalho. **Execute-o como Administrador**.
+5.  O overlay aparecerá instantaneamente — use **F8** para mostrar/esconder.
 
-### Build do Código Fonte
+### Build do Código Fonte (Desenvolvedores)
+
+Se desejar compilar manualmente para gerar o executável único:
 
 ```bash
+# Clone o repositório
 git clone https://github.com/WallaceFvck/PerformanceOverlay.git
 cd PerformanceOverlay
-dotnet build -c Release -r win-x64
+
+# Publique como arquivo único e independente
+dotnet publish -c Release -r win-x64 --self-contained true
 ```
 
-> O executável estará em `bin/Release/net8.0-windows/win-x64/`
+> O executável independente (~150MB) estará em: `bin/Release/net8.0-windows/win-x64/publish/PerformanceOverlay.exe`.
 
 ---
 
