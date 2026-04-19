@@ -9,7 +9,7 @@
 [![License MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![Anticheat Safe](https://img.shields.io/badge/Anticheat-Safe-4CAF50?style=for-the-badge&logo=shield&logoColor=white)](#-anticheat--segurança)
 
-**Monitoramento de FPS, frametime, CPU, GPU e RAM em tempo real — direto do Kernel do Windows.**
+**Monitoramento de FPS, frametime, CPU, GPU e RAM em tempo real direto do Kernel do Windows.**
 **Sem hooks. Sem injeção. Sem risco de banimento.**
 
 [📥 Download](#-instalação) · [📸 Screenshots](#-screenshots) · [🛠 Como Funciona](#-o-coração-do-app--etw-kernel-tracing) · [🌍 Idiomas](#-idiomas)
@@ -22,14 +22,14 @@
 
 | Recurso | Descrição |
 |---|---|
-| **FPS em Tempo Real** | Captura precisa via ETW (Event Tracing for Windows) — mesma técnica do PresentMon e CapFrameX |
+| **FPS em Tempo Real** | Captura precisa via ETW (Event Tracing for Windows)   mesma técnica do PresentMon e CapFrameX |
 | **1% Low FPS** | Identifica micro-stutters que o FPS médio esconde |
 | **Gráfico de Performance** | Visualização instantânea: FPS alto = topo, queda = mergulho. Dados brutos, sem suavização |
-| **CPU / GPU / RAM / VRAM** | Uso, temperatura, clock e consumo de energia — como o Task Manager, mas no jogo |
+| **CPU / GPU / RAM / VRAM** | Uso, temperatura, clock e consumo de energia   como o Task Manager, mas no jogo |
 | **Detecção de API** | Identifica automaticamente DirectX 9/11/12, Vulkan e OpenGL |
-| **Modo Compacto** | Apenas FPS + 1% Low + API — ocupa ~100px de largura |
-| **Hotkeys Globais** | F8 toggle, Ctrl+F8 posição, Shift+F8 modo — reconfiguráveis |
-| **6 Idiomas** | 🇬🇧 EN · 🇧🇷 PT · 🇪🇸 ES · 🇫🇷 FR · 🇩🇪 DE · 🇨🇳 ZH — detecção automática do sistema |
+| **Modo Compacto** | Apenas FPS + 1% Low + API   ocupa ~100px de largura |
+| **Hotkeys Globais** | F8 toggle, Ctrl+F8 posição, Shift+F8 modo   reconfiguráveis |
+| **6 Idiomas** | 🇬🇧 EN · 🇧🇷 PT · 🇪🇸 ES · 🇫🇷 FR · 🇩🇪 DE · 🇨🇳 ZH   detecção automática do sistema |
 | **Opacidade Seletiva** | Fundo translúcido, texto sempre 100% legível |
 | **Título da Janela** | Exibe "Minecraft 1.12.1 - Singleplayer" em vez de "javaw" |
 
@@ -43,7 +43,7 @@
 |---|---|
 | ![Full Mode](docs/screenshot-full.png) | ![Compact Mode](docs/screenshot-compact.png) |
 
-| Configurações — Geral | Configurações — Aparência |
+| Configurações   Geral | Configurações   Aparência |
 |---|---|
 | ![Settings General](docs/screenshot-settings-general.png) | ![Settings Appearance](docs/screenshot-settings-appearance.png) |
 
@@ -53,11 +53,11 @@
 
 ---
 
-## 🧠 O Coração do App — ETW Kernel Tracing
+## 🧠 O Coração do App   ETW Kernel Tracing
 
 A maioria dos overlays de FPS usa **hooks DirectX** (interceptação de chamadas de API) ou **DLL injection** para capturar frames. Essas técnicas são invasivas, detectáveis por anticheats, e adicionam latência ao pipeline de renderização.
 
-O PerformanceOverlay usa uma abordagem fundamentalmente diferente: **Event Tracing for Windows (ETW)** — o mesmo sistema de instrumentação que o Windows usa internamente para o Task Manager, o PresentMon da Intel e o CapFrameX.
+O PerformanceOverlay usa uma abordagem fundamentalmente diferente: **Event Tracing for Windows (ETW)**   o mesmo sistema de instrumentação que o Windows usa internamente para o Task Manager, o PresentMon da Intel e o CapFrameX.
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌─────────────────┐
@@ -76,11 +76,11 @@ O PerformanceOverlay usa uma abordagem fundamentalmente diferente: **Event Traci
 
 **Como funciona:**
 
-Cada vez que um jogo chama `IDXGISwapChain::Present()`, o runtime DXGI emite um evento ETW com **Event ID 42**. O PerformanceOverlay escuta esses eventos como consumidor read-only — sem modificar a memória do jogo, sem interceptar chamadas, sem tocar no pipeline de renderização.
+Cada vez que um jogo chama `IDXGISwapChain::Present()`, o runtime DXGI emite um evento ETW com **Event ID 42**. O PerformanceOverlay escuta esses eventos como consumidor read-only   sem modificar a memória do jogo, sem interceptar chamadas, sem tocar no pipeline de renderização.
 
 O frametime é calculado pela diferença entre timestamps consecutivos do kernel (precisão de ~100 nanosegundos). O FPS é derivado: `FPS = count / (totalTime / 1000)`. O 1% Low usa o percentil 99 dos frametimes ordenados.
 
-Para jogos OpenGL (como Minecraft via LWJGL), o fallback usa eventos do DxgKrnl — o driver de kernel do Windows que processa todas as APIs gráficas.
+Para jogos OpenGL (como Minecraft via LWJGL), o fallback usa eventos do DxgKrnl   o driver de kernel do Windows que processa todas as APIs gráficas.
 
 ---
 
@@ -96,7 +96,7 @@ O PerformanceOverlay foi projetado desde o início para ser **100% seguro contra
 | ❌ CreateRemoteThread | ✅ Zero threads criadas em outros processos |
 | ❌ SetWindowsHookEx | ✅ Hotkeys via `RegisterHotKey` (API pública) |
 
-A janela do overlay usa `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE` — é invisível para anticheats como EAC, BattlEye e Vanguard porque não intercepta input nem modifica a cadeia de renderização.
+A janela do overlay usa `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE`   é invisível para anticheats como EAC, BattlEye e Vanguard porque não intercepta input nem modifica a cadeia de renderização.
 
 > **Auditoria completa:** `grep -rn "WriteProcessMemory\|CreateRemoteThread\|SetWindowsHookEx" --include="*.cs"` retorna **zero resultados** no código fonte.
 
@@ -115,7 +115,7 @@ A janela do overlay usa `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE
 1. Baixe o [último release](https://github.com/seu-usuario/PerformanceOverlay/releases/latest)
 2. Extraia o ZIP para qualquer pasta
 3. Execute `PerformanceOverlay.exe` **como Administrador**
-4. O overlay aparece no canto superior esquerdo — use **F8** para toggle
+4. O overlay aparece no canto superior esquerdo   use **F8** para toggle
 
 ### Build do Código Fonte
 
@@ -162,7 +162,7 @@ O idioma é detectado automaticamente pelo sistema operacional. Para mudar manua
 |---|---|---|
 | **Runtime** | .NET 8 (x64) | Framework base |
 | **UI** | WPF (XAML + C#) | Overlay transparente + Settings |
-| **FPS Capture** | [Microsoft.Diagnostics.Tracing.TraceEvent](https://github.com/microsoft/perfview) | ETW consumer — captura Present events |
+| **FPS Capture** | [Microsoft.Diagnostics.Tracing.TraceEvent](https://github.com/microsoft/perfview) | ETW consumer   captura Present events |
 | **Sensores** | [LibreHardwareMonitorLib](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) | CPU/GPU temp, clock, power |
 | **GPU Usage** | `PerformanceCounter("GPU Engine")` | Mesmo método do Task Manager |
 | **Driver Info** | Windows Registry | Versão do driver AMD/NVIDIA/Intel |
@@ -213,7 +213,7 @@ O log tem rotação automática (máximo 1 MB) e não contém dados pessoais.
 | **CPU** | < 0.15% | 1 core, medido com Process Explorer |
 | **RAM** | ~45 MB | Inclui LHM + ETW buffers |
 | **GPU** | 0% | Overlay WPF usa composição do DWM |
-| **Latência** | 0 ms adicionais | ETW é passivo — não toca no render pipeline |
+| **Latência** | 0 ms adicionais | ETW é passivo   não toca no render pipeline |
 
 ---
 
