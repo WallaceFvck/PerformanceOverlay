@@ -1,37 +1,38 @@
 <div align="center">
 
-# 🎮 PerformanceOverlay
+# PerformanceOverlay
 
-### Real-time gaming metrics with zero performance impact.
+### Monitore o desempenho do seu PC enquanto joga sem perder FPS.
 
-[![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/download/dotnet/8.0)
-[![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
-[![License MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![Anticheat Safe](https://img.shields.io/badge/Anticheat-Safe-4CAF50?style=for-the-badge&logo=shield&logoColor=white)](#-anticheat--segurança)
+**[🚀 CLIQUE AQUI PARA BAIXAR O INSTALADOR](https://github.com/WallaceFvck/PerformanceOverlay/releases/latest/download/PerformanceOverlay_Setup.exe)**
+*(Link direto para a versão mais recente)*
 
-**Monitoramento de FPS, frametime, CPU, GPU e RAM em tempo real direto do Kernel do Windows.**
-**Sem hooks. Sem injeção. Sem risco de banimento.**
+---
 
-[📥 Download](#-instalação) · [📸 Screenshots](#-screenshots) · [🛠 Como Funciona](#-o-coração-do-app--etw-kernel-tracing) · [🌍 Idiomas](#-idiomas)
+[![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/download/dotnet/8.0)
+[![Windows](https://img.shields.io/badge/Windows-10%2F11-0078D6?style=flat-square&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![Anticheat Safe](https://img.shields.io/badge/Anticheat-Safe-4CAF50?style=flat-square)](#segurança-e-anticheat)
+
+**Monitor de FPS, CPU, GPU e RAM direto no Kernel do Windows.**
+**Seguro para jogos online • Super leve • Sem propagandas**
+
+[Screenshots](#screenshots) • [Como funciona](#detalhes-técnicos) • [Segurança](#segurança-e-anticheat)
 
 </div>
 
 ---
 
-## ✨ Funcionalidades
+## 📥 Como baixar e usar (Passo a Passo)
 
-| Recurso | Descrição |
-|---|---|
-| **FPS em Tempo Real** | Captura precisa via ETW (Event Tracing for Windows)   mesma técnica do PresentMon e CapFrameX |
-| **1% Low FPS** | Identifica micro-stutters que o FPS médio esconde |
-| **Gráfico de Performance** | Visualização instantânea: FPS alto = topo, queda = mergulho. Dados brutos, sem suavização |
-| **CPU / GPU / RAM / VRAM** | Uso, temperatura, clock e consumo de energia   como o Task Manager, mas no jogo |
-| **Detecção de API** | Identifica automaticamente DirectX 9/11/12, Vulkan e OpenGL |
-| **Modo Compacto** | Apenas FPS + 1% Low + API   ocupa ~100px de largura |
-| **Hotkeys Globais** | F8 toggle, Ctrl+F8 posição, Shift+F8 modo   reconfiguráveis |
-| **6 Idiomas** | 🇬🇧 EN · 🇧🇷 PT · 🇪🇸 ES · 🇫🇷 FR · 🇩🇪 DE · 🇨🇳 ZH   detecção automática do sistema |
-| **Opacidade Seletiva** | Fundo translúcido, texto sempre 100% legível |
-| **Título da Janela** | Exibe "Minecraft 1.12.1 - Singleplayer" em vez de "javaw" |
+1. **Baixe o Instalador:** [Clique aqui](https://github.com/WallaceFvck/PerformanceOverlay/releases/latest/download/PerformanceOverlay_Setup.exe) para baixar o arquivo `PerformanceOverlay_Setup.exe`.
+2. **Instale:** Abra o arquivo baixado e siga as instruções na tela (é um instalador comum do Windows).
+3. **Execute como Administrador:** Após instalar, clique com o botão direito no ícone do **PerformanceOverlay** na sua área de trabalho e escolha **"Executar como Administrador"** (Isso é obrigatório para que ele consiga ler a temperatura das peças).
+4. **No Jogo:** O overlay aparecerá automaticamente no canto da tela.
+
+### ⌨️ Comandos Rápidos
+* **F8**: Esconde ou mostra o monitor.
+* **Ctrl + F8**: Muda o monitor de lugar (canto superior esquerdo, direito, etc).
+* **Shift + F8**: Alterna entre o modo detalhado e o modo compacto (só FPS).
 
 ---
 
@@ -39,198 +40,47 @@
 
 <div align="center">
 
-| Modo Completo | Modo Compacto |
-|---|---|
-| ![Full Mode](docs/screenshot-full.png) | ![Compact Mode](docs/screenshot-compact.png) |
-
-| Configurações   Geral | Configurações   Aparência |
-|---|---|
-| ![Settings General](docs/screenshot-settings-general.png) | ![Settings Appearance](docs/screenshot-settings-appearance.png) |
+| Visual no Jogo | Menu de Configurações |
+|:---:|:---:|
+| ![Full Mode](docs/screenshot-full.png) | ![Settings General](docs/screenshot-settings-general.png) |
 
 </div>
 
 ---
 
-## 🧠 O Coração do App   ETW Kernel Tracing
+## 🛡️ Segurança e Anticheat
 
-A maioria dos overlays de FPS usa **hooks DirectX** (interceptação de chamadas de API) ou **DLL injection** para capturar frames. Essas técnicas são invasivas, detectáveis por anticheats, e adicionam latência ao pipeline de renderização.
+Se você joga jogos como *Valorant, CS2, Warzone ou League of Legends*, pode usar o PerformanceOverlay sem medo. 
 
-O PerformanceOverlay usa uma abordagem fundamentalmente diferente: **Event Tracing for Windows (ETW)**   o mesmo sistema de instrumentação que o Windows usa internamente para o Task Manager, o PresentMon da Intel e o CapFrameX.
-
-```
-┌─────────────┐      ┌──────────────┐      ┌─────────────────┐
-│   Jogo      │───>> │  DXGI/D3D9   │───>> │  Windows Kernel │
-│ (DX12/VK/GL)│      │  Runtime     │      │  ETW Provider   │
-└─────────────┘      └──────────────┘      └────────┬────────┘
-                                                    │
-                                        Event ID 42 (Present)
-                                                    │
-                                         ┌──────────▼──────────┐
-                                         │  PerformanceOverlay │
-                                         │  (consumidor ETW)   │
-                                         │  Leitura passiva    │
-                                         └─────────────────────┘
-```
-
-**Como funciona:**
-
-Cada vez que um jogo chama `IDXGISwapChain::Present()`, o runtime DXGI emite um evento ETW com **Event ID 42**. O PerformanceOverlay escuta esses eventos como consumidor read-only   sem modificar a memória do jogo, sem interceptar chamadas, sem tocar no pipeline de renderização.
-
-O frametime é calculado pela diferença entre timestamps consecutivos do kernel (precisão de ~100 nanosegundos). O FPS é derivado: `FPS = count / (totalTime / 1000)`. O 1% Low usa o percentil 99 dos frametimes ordenados.
-
-Para jogos OpenGL (como Minecraft via LWJGL), o fallback usa eventos do DxgKrnl   o driver de kernel do Windows que processa todas as APIs gráficas.
+Diferente de outros programas (como o antigo Fraps), nós **não injetamos nada** dentro do seu jogo. O app apenas "escuta" o Windows dizer quando um frame foi desenhado. É uma leitura passiva, o que torna o app invisível para sistemas anticheat (Vanguard, Ricochet, EAC).
 
 ---
 
-## 🛡 Anticheat & Segurança
+## ✨ O que ele monitora?
 
-O PerformanceOverlay foi projetado desde o início para ser **100% seguro contra banimentos**.
-
-| Técnica Perigosa | PerformanceOverlay |
-|---|---|
-| ❌ DLL Injection | ✅ Nenhuma DLL injetada em processos |
-| ❌ Hooks DirectX/Vulkan | ✅ ETW é leitura passiva do kernel |
-| ❌ WriteProcessMemory | ✅ Apenas `OpenProcess(QUERY_INFO \| VM_READ)` |
-| ❌ CreateRemoteThread | ✅ Zero threads criadas em outros processos |
-| ❌ SetWindowsHookEx | ✅ Hotkeys via `RegisterHotKey` (API pública) |
-
-A janela do overlay usa `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE`   é invisível para anticheats como EAC, BattlEye e Vanguard porque não intercepta input nem modifica a cadeia de renderização.
-
-> **Auditoria completa:** `grep -rn "WriteProcessMemory\|CreateRemoteThread\|SetWindowsHookEx" --include="*.cs"` retorna **zero resultados** no código fonte.
+* **FPS Real:** Taxa de quadros precisa.
+* **1% Low:** Mostra se o jogo está tendo aquelas "travadinhas" chatas.
+* **CPU:** Uso total e temperatura.
+* **GPU:** Uso da placa de vídeo, temperatura e memória VRAM.
+* **RAM:** Quanto do seu sistema está sendo usado.
+* **API:** Detecta se o jogo é DX11, DX12, Vulkan, etc.
 
 ---
 
-## 📥 Instalação
+## 🛠️ Detalhes para Técnicos
 
-### Requisitos
-
-* **Sistema Operacional**: Windows 10 ou 11 (x64).
-* **Privilégios**: Execução como **Administrador** (obrigatório para acessar o Kernel ETW e sensores de hardware).
-* **Runtime**: [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) (o instalador tentará detectar, mas recomendamos ter instalado).
-
-### Passos para Usuários (Recomendado)
-
-1.  Acesse a página de [Últimos Releases](https://github.com/WallaceFvck/PerformanceOverlay/releases/latest).
-2.  Baixe o arquivo **`PerformanceOverlay_Setup.exe`**.
-3.  Execute o instalador e siga as instruções na tela.
-4.  Ao finalizar, o ícone aparecerá na sua Área de Trabalho. **Execute-o como Administrador**.
-5.  O overlay aparecerá instantaneamente — use **F8** para mostrar/esconder.
-
-### Build do Código Fonte (Desenvolvedores)
-
-Se desejar compilar manualmente para gerar o executável único:
-
-```bash
-# Clone o repositório
-git clone https://github.com/WallaceFvck/PerformanceOverlay.git
-cd PerformanceOverlay
-
-# Publique como arquivo único e independente
-dotnet publish -c Release -r win-x64 --self-contained true
-```
-
-> O executável independente (~150MB) estará em: `bin/Release/net8.0-windows/win-x64/publish/PerformanceOverlay.exe`.
+O PerformanceOverlay utiliza **ETW (Event Tracing for Windows)**. Usamos o provedor `Microsoft-Windows-D3D9` e `DXGI` para capturar eventos de *Present* sem a necessidade de hooks de renderização. O monitoramento de hardware é feito através da biblioteca `LibreHardwareMonitor`.
 
 ---
 
-## ⌨️ Hotkeys Padrão
+## 📄 Licença e Suporte
 
-| Ação | Tecla | Reconfigurável? |
-|---|---|---|
-| Mostrar / Esconder | `F8` | ✅ |
-| Mudar posição (4 cantos) | `Ctrl+F8` | ✅ |
-| Modo Compacto ↔ Completo | `Shift+F8` | ✅ |
+Este é um projeto de código aberto sob a licença **MIT**. 
 
-Todas as hotkeys são reconfiguráveis em **Configurações → Geral → Hotkeys**.
+Encontrou um erro? 
+Verifique o arquivo de log em: `%APPDATA%\PerformanceOverlay\overlay.log` e me envie o erro aqui no GitHub.
 
 ---
-
-## 🌍 Idiomas
-
-O idioma é detectado automaticamente pelo sistema operacional. Para mudar manualmente: **Configurações → Geral → Idioma**.
-
-| Código | Idioma | Status |
-|---|---|---|
-| `en` | 🇬🇧 English | ✅ Completo |
-| `pt` | 🇧🇷 Português | ✅ Completo |
-| `es` | 🇪🇸 Español | ✅ Completo |
-| `fr` | 🇫🇷 Français | ✅ Completo |
-| `de` | 🇩🇪 Deutsch | ✅ Completo |
-| `zh` | 🇨🇳 中文 | ✅ Completo |
-
----
-
-## 🏗 Stack Técnica
-
-| Componente | Tecnologia | Papel |
-|---|---|---|
-| **Runtime** | .NET 8 (x64) | Framework base |
-| **UI** | WPF (XAML + C#) | Overlay transparente + Settings |
-| **FPS Capture** | [Microsoft.Diagnostics.Tracing.TraceEvent](https://github.com/microsoft/perfview) | ETW consumer   captura Present events |
-| **Sensores** | [LibreHardwareMonitorLib](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) | CPU/GPU temp, clock, power |
-| **GPU Usage** | `PerformanceCounter("GPU Engine")` | Mesmo método do Task Manager |
-| **Driver Info** | Windows Registry | Versão do driver AMD/NVIDIA/Intel |
-| **Tray Icon** | [H.NotifyIcon.Wpf](https://github.com/HavenDV/H.NotifyIcon) | System tray com menu dark |
-| **API Detection** | psapi.dll `EnumProcessModulesEx` | Detecção de DLLs gráficas carregadas |
-
-### Arquitetura
-
-```
-App.xaml.cs                    ← Entry point + System Tray
-├── TelemetryPipeline          ← Orquestrador (EMA + UI throttle 60Hz)
-│   ├── FrameCaptureService    ← ETW session (DXGI/D3D9/DxgKrnl)
-│   ├── HardwareMonitorService ← LHM + GPU Engine counters
-│   ├── ForegroundTracker      ← Detecção de janela ativa + título
-│   └── GraphicsApiDetector    ← Módulos + ETW Refine
-├── OverlayWindow              ← HUD (Full + Compact)
-├── SettingsWindow             ← Configurações (dark theme)
-├── LocalizationManager        ← 6 idiomas inline
-└── HotkeyService              ← Hotkeys globais com re-registro
-```
-
----
-
-## 🐛 Suporte & Logs
-
-O PerformanceOverlay gera automaticamente um arquivo de log em:
-
-```
-%APPDATA%\PerformanceOverlay\overlay.log
-```
-
-Este ficheiro regista todas as informações relevantes para diagnóstico: inicialização do ETW, detecção de API, erros de sensores, registro de hotkeys e falhas de configuração.
-
-**Para reportar um bug:**
-
-1. Reproduza o problema
-2. Localize o ficheiro `overlay.log` (cole `%APPDATA%\PerformanceOverlay` no Explorer)
-3. Abra uma [Issue](https://github.com/WallaceFvck/PerformanceOverlay/issues/new) e anexe o log
-
-O log tem rotação automática (máximo 1 MB) e não contém dados pessoais.
-
----
-
-## 📊 Performance do Overlay
-
-| Métrica | Valor | Notas |
-|---|---|---|
-| **CPU** | < 0.15% | 1 core, medido com Process Explorer |
-| **RAM** | ~45 MB | Inclui LHM + ETW buffers |
-| **GPU** | 0% | Overlay WPF usa composição do DWM |
-| **Latência** | 0 ms adicionais | ETW é passivo   não toca no render pipeline |
-
----
-
-## 📄 Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).
-
-Desenvolvido com ❤️ para a comunidade gamer.
-
----
-
 <div align="center">
-
-**Se este projeto te ajudou, deixa uma ⭐ no repositório!**
-
+Gostou do projeto? Deixa uma ⭐ aqui no topo da página para ajudar!
 </div>
