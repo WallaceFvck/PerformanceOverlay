@@ -110,7 +110,7 @@ A janela do overlay usa `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE
 
 ### Passos
 
-1. Baixe o [último release](https://github.com/seu-usuario/PerformanceOverlay/releases/latest)
+1. Baixe o [último release](https://github.com/WallaceFvck/PerformanceOverlay/releases/latest)
 2. Extraia o ZIP para qualquer pasta
 3. Execute `PerformanceOverlay.exe` **como Administrador**
 4. O overlay aparece no canto superior esquerdo   use **F8** para toggle
@@ -118,7 +118,7 @@ A janela do overlay usa `WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE
 ### Build do Código Fonte
 
 ```bash
-git clone https://github.com/seu-usuario/PerformanceOverlay.git
+git clone https://github.com/WallaceFvck/PerformanceOverlay.git
 cd PerformanceOverlay
 dotnet build -c Release -r win-x64
 ```
@@ -198,7 +198,7 @@ Este ficheiro regista todas as informações relevantes para diagnóstico: inici
 
 1. Reproduza o problema
 2. Localize o ficheiro `overlay.log` (cole `%APPDATA%\PerformanceOverlay` no Explorer)
-3. Abra uma [Issue](https://github.com/seu-usuario/PerformanceOverlay/issues/new) e anexe o log
+3. Abra uma [Issue](https://github.com/WallaceFvck/PerformanceOverlay/issues/new) e anexe o log
 
 O log tem rotação automática (máximo 1 MB) e não contém dados pessoais.
 
