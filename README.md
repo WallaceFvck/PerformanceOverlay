@@ -49,8 +49,6 @@
 
 </div>
 
-> 💡 *Substitua os placeholders acima pelas capturas reais da sua tela.*
-
 ---
 
 ## 🧠 O Coração do App   ETW Kernel Tracing
