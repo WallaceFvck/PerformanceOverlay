@@ -1,0 +1,181 @@
+<Window x:Class="PerformanceOverlay.UI.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PerformanceOverlay"
+        AllowsTransparency="True" WindowStyle="None" Background="Transparent"
+        Topmost="True" ShowInTaskbar="False" ShowActivated="False"
+        ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+        Icon="/Resources/overlay.ico"
+        Left="12" Top="12" Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="AccentBrush" Color="#E53935"/>
+        <SolidColorBrush x:Key="AccentBorderBrush" Color="#40E53935"/>
+        <SolidColorBrush x:Key="GraphLineBrush" Color="#CCE53935"/>
+        <!-- PanelBgBrush: alpha controlado por código (opacidade seletiva) -->
+        <SolidColorBrush x:Key="PanelBgBrush" Color="#E0101014"/>
+        <SolidColorBrush x:Key="PanelBorderBrush" Color="#FF2A2A32"/>
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#FFAAAAAA"/>
+        <SolidColorBrush x:Key="TextDimBrush" Color="#FF666666"/>
+        <SolidColorBrush x:Key="BarBgBrush" Color="#FF1A1A22"/>
+        <SolidColorBrush x:Key="BarFillBrush" Color="#FFE53935"/>
+
+        <Style x:Key="MonoText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Consolas, Cascadia Mono, Courier New"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style x:Key="LabelText" TargetType="TextBlock" BasedOn="{StaticResource MonoText}">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="FontSize" Value="11"/>
+        </Style>
+        <Style x:Key="ValueText" TargetType="TextBlock" BasedOn="{StaticResource MonoText}">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style x:Key="BigValueText" TargetType="TextBlock" BasedOn="{StaticResource MonoText}">
+            <Setter Property="FontSize" Value="28"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style x:Key="UnitText" TargetType="TextBlock" BasedOn="{StaticResource MonoText}">
+            <Setter Property="Foreground" Value="{DynamicResource TextDimBrush}"/>
+            <Setter Property="FontSize" Value="10"/>
+        </Style>
+        <Style x:Key="SectionBorder" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource PanelBgBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PanelBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Margin" Value="0,2"/>
+        </Style>
+        <Style x:Key="UsageBar" TargetType="ProgressBar">
+            <Setter Property="Height" Value="4"/>
+            <Setter Property="Minimum" Value="0"/>
+            <Setter Property="Maximum" Value="100"/>
+            <Setter Property="Background" Value="{DynamicResource BarBgBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource BarFillBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,3,0,0"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="RootScaleHost">
+
+        <!-- MODO FULL -->
+        <Border x:Name="FullPanel" Width="320"
+                Background="{DynamicResource PanelBgBrush}"
+                BorderBrush="{DynamicResource AccentBorderBrush}"
+                BorderThickness="1" CornerRadius="6" Padding="6"
+                Visibility="Visible">
+            <StackPanel>
+                <Border Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="TxtApi" Style="{StaticResource LabelText}" Text="N/A" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="TxtTime" Style="{StaticResource MonoText}" Foreground="{DynamicResource TextSecondaryBrush}" Text="--:--:--"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                            <TextBlock x:Name="TxtFps" Style="{StaticResource BigValueText}" Text="---"/>
+                            <TextBlock Style="{StaticResource MonoText}" Text=" fps" VerticalAlignment="Bottom" Margin="4,0,0,5" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" Margin="16,0,0,4">
+                                <TextBlock Style="{StaticResource UnitText}" Text="1%"/>
+                                <TextBlock x:Name="TxtFps1Low" Style="{StaticResource MonoText}" FontSize="11" Text="---"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                            <TextBlock Style="{StaticResource UnitText}" Text="Frametime "/>
+                            <TextBlock x:Name="TxtFrametime" Style="{StaticResource MonoText}" FontSize="11" Text="--- ms"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtProcessName" Style="{StaticResource MonoText}" FontSize="9"
+                                   Foreground="{DynamicResource TextDimBrush}" Margin="0,3,0,0" Text=""
+                                   TextTrimming="CharacterEllipsis" MaxWidth="300"/>
+                        <Canvas x:Name="FrametimeGraph" Height="30" Margin="0,4,0,0" ClipToBounds="True" Background="#10FFFFFF"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource LabelText}" Text="CPU " DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtCpuName" Style="{StaticResource MonoText}" FontSize="11" Text="---" DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtCpuUsage" Style="{StaticResource ValueText}" HorizontalAlignment="Right" Text="--%"/>
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <TextBlock x:Name="TxtCpuClock" Style="{StaticResource MonoText}" FontSize="11" Text="---- MHz"/>
+                            <TextBlock Foreground="{DynamicResource TextDimBrush}" Text="  " FontSize="11"/>
+                            <TextBlock x:Name="TxtCpuTemp" Style="{StaticResource MonoText}" FontSize="11" Text="--°C"/>
+                            <TextBlock Foreground="{DynamicResource TextDimBrush}" Text="  " FontSize="11"/>
+                            <TextBlock x:Name="TxtCpuPower" Style="{StaticResource MonoText}" FontSize="11" Text="--W"/>
+                        </StackPanel>
+                        <ProgressBar x:Name="BarCpu" Style="{StaticResource UsageBar}" Value="0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource LabelText}" Text="RAM " DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtRamUsage" Style="{StaticResource MonoText}" FontSize="11" Text="-----/----- MB" DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtRamPercent" Style="{StaticResource ValueText}" HorizontalAlignment="Right" Text="--%"/>
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <TextBlock x:Name="TxtRamFreq" Style="{StaticResource MonoText}" FontSize="11" Text=""/>
+                        </StackPanel>
+                        <ProgressBar x:Name="BarRam" Style="{StaticResource UsageBar}" Value="0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource LabelText}" Text="GPU " DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtGpuName" Style="{StaticResource MonoText}" FontSize="11" Text="---" DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtGpuUsage" Style="{StaticResource ValueText}" HorizontalAlignment="Right" Text="--%"/>
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <TextBlock x:Name="TxtGpuClock" Style="{StaticResource MonoText}" FontSize="11" Text="---- MHz"/>
+                            <TextBlock Foreground="{DynamicResource TextDimBrush}" Text="  " FontSize="11"/>
+                            <TextBlock x:Name="TxtGpuTemp" Style="{StaticResource MonoText}" FontSize="11" Text="--°C"/>
+                            <TextBlock Foreground="{DynamicResource TextDimBrush}" Text="  " FontSize="11"/>
+                            <TextBlock x:Name="TxtGpuPower" Style="{StaticResource MonoText}" FontSize="11" Text="--W"/>
+                        </StackPanel>
+                        <ProgressBar x:Name="BarGpu" Style="{StaticResource UsageBar}" Value="0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource SectionBorder}">
+                    <StackPanel>
+                        <DockPanel>
+                            <TextBlock Style="{StaticResource LabelText}" Text="VRAM " DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtVramUsage" Style="{StaticResource MonoText}" FontSize="11" Text="----/---- MB" DockPanel.Dock="Left"/>
+                            <TextBlock x:Name="TxtVramPercent" Style="{StaticResource ValueText}" HorizontalAlignment="Right" Text="--%"/>
+                        </DockPanel>
+                        <ProgressBar x:Name="BarVram" Style="{StaticResource UsageBar}" Value="0"/>
+                    </StackPanel>
+                </Border>
+                <Border Style="{StaticResource SectionBorder}" Padding="8,4">
+                    <TextBlock x:Name="TxtDriverInfo" Style="{StaticResource MonoText}" FontSize="10"
+                               Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap" Text="Driver: ---"/>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- MODO COMPACT — mínimo: FPS + 1%Low + API -->
+        <Border x:Name="CompactPanel"
+                Background="{DynamicResource PanelBgBrush}"
+                BorderBrush="{DynamicResource AccentBorderBrush}"
+                BorderThickness="1" CornerRadius="4" Padding="10,6"
+                Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock x:Name="TxtCompactFps" Style="{StaticResource MonoText}" FontSize="20" FontWeight="Bold" Text="---" VerticalAlignment="Center"/>
+                <TextBlock Style="{StaticResource MonoText}" Text="fps" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10" VerticalAlignment="Bottom" Margin="2,0,0,3"/>
+                <Border Width="1" Background="{DynamicResource TextDimBrush}" Margin="10,4,10,4" Opacity="0.5"/>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                    <TextBlock Style="{StaticResource UnitText}" Text="1% LOW" FontSize="8"/>
+                    <TextBlock x:Name="TxtCompactFps1Low" Style="{StaticResource MonoText}" FontSize="13" FontWeight="SemiBold" Text="---"/>
+                </StackPanel>
+                <Border Width="1" Background="{DynamicResource TextDimBrush}" Margin="10,4,10,4" Opacity="0.5"/>
+                <TextBlock x:Name="TxtCompactApi" Style="{StaticResource LabelText}" FontSize="10" Text="N/A" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

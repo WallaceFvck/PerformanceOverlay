@@ -1,0 +1,40 @@
+{
+  // ═══════════════════════════════════════════════════════════════
+  // PerformanceOverlay — Arquivo de Configuração
+  // ═══════════════════════════════════════════════════════════════
+  // Este arquivo é gerado automaticamente no primeiro startup.
+  // Localização real: %APPDATA%\PerformanceOverlay\config.json
+  // Edite e reinicie o overlay para aplicar mudanças.
+
+  // ── Posição & Layout ──────────────────────────────────────────
+  // 0 = Top-Left, 1 = Top-Right, 2 = Bottom-Left, 3 = Bottom-Right
+  "Position": 0,
+  "MarginX": 12,
+  "MarginY": 12,
+  "Opacity": 0.92,
+  "Scale": 1.0,
+
+  // ── Intervalos de Atualização ─────────────────────────────────
+  // SensorIntervalMs: polling de CPU/GPU/RAM. 
+  //   500ms = sweet spot (feedback rápido, overhead mínimo)
+  //   1000ms = mais econômico, recomendado para laptops
+  //   250ms = mais responsivo, overhead ~0.2% CPU
+  "SensorIntervalMs": 500,
+
+  // FpsWindowMs: janela de cálculo de FPS médio.
+  //   1000ms = FPS estável, atualizado 1x por segundo
+  //   500ms  = mais responsivo mas valores mais "nervosos"
+  "FpsWindowMs": 1000,
+
+  // ── Seções Visíveis ───────────────────────────────────────────
+  "ShowCpu": true,
+  "ShowGpu": true,
+  "ShowRam": true,
+  "ShowFrameTiming": true,
+  "ShowDriverInfo": true,
+  "ShowFrametimeGraph": true,
+
+  // ── Hotkeys ───────────────────────────────────────────────────
+  "ToggleVisibilityHotkey": "F12",
+  "CyclePositionHotkey": "Ctrl+F12"
+}
